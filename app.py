@@ -2,10 +2,9 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-
-# Function to scrape the sitemap
 from urllib.parse import urlparse
 
+# Function to scrape the sitemap
 def scrape_sitemap(url):
     # Check if the URL has a scheme (http or https)
     if not urlparse(url).scheme:
@@ -15,7 +14,6 @@ def scrape_sitemap(url):
     soup = BeautifulSoup(response.content, 'lxml')  # Use lxml for parsing
     urls = [element.text for element in soup.find_all('loc')]
     return urls
-
 
 # Function to get PageSpeed Insights
 def get_pagespeed_insights(url, api_key):
@@ -52,17 +50,30 @@ def main():
 
     # Retrieve the API key from Streamlit secrets
     api_key = st.secrets["pagespeed_api_key"]
-    
+
     if st.button("Scrape and Analyze"):
         if input_url:
             scraped_urls = scrape_sitemap(input_url)
+            total_urls = len(scraped_urls)
             results = []
-            for url in scraped_urls:
+
+            # Initialize a progress bar
+            progress_bar = st.progress(0)
+            progress_text = st.empty()
+
+            for index, url in enumerate(scraped_urls, start=1):
                 insights = get_pagespeed_insights(url, api_key)
                 results.append(insights)
-            
-            df = pd.DataFrame(results)
-            st.write(df)
+                progress_bar.progress(index / total_urls)
+                progress_text.text(f"Processing URL {index} of {total_urls}")
+
+                # Update the table live
+                df = pd.DataFrame(results)
+                st.write(df)
+
+            # Final update to progress bar and text
+            progress_bar.empty()
+            progress_text.empty()
 
             # Download link for DataFrame
             st.download_button(label="Download data as CSV",
