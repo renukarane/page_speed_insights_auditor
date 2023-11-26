@@ -4,7 +4,7 @@ def main():
     input_url = st.text_input("Enter the URL of the sitemap (e.g., https://example.com/sitemap.xml):")
 
     # Retrieve the API key from Streamlit secrets
-    api_key = st.secrets["pagespeed"]["api_key"]
+    api_key = st.secrets["pagespeed_api_key"]
     
     if st.button("Scrape and Analyze"):
         if input_url:
