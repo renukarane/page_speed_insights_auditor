@@ -12,9 +12,10 @@ def scrape_sitemap(url):
         url = 'https://' + url
 
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'xml')
+    soup = BeautifulSoup(response.content, 'lxml')  # Use lxml for parsing
     urls = [element.text for element in soup.find_all('loc')]
     return urls
+
 
 # Function to get PageSpeed Insights
 def get_pagespeed_insights(url, api_key):
