@@ -61,15 +61,18 @@ def main():
             progress_bar = st.progress(0)
             progress_text = st.empty()
 
+            # Create a placeholder for the table
+            table_placeholder = st.empty()
+
             for index, url in enumerate(scraped_urls, start=1):
                 insights = get_pagespeed_insights(url, api_key)
                 results.append(insights)
                 progress_bar.progress(index / total_urls)
                 progress_text.text(f"Processing URL {index} of {total_urls}")
 
-                # Update the table live
+                # Update the table in the placeholder
                 df = pd.DataFrame(results)
-                st.write(df)
+                table_placeholder.write(df)
 
             # Final update to progress bar and text
             progress_bar.empty()
