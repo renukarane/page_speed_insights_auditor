@@ -4,7 +4,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 # Function to scrape the sitemap
+from urllib.parse import urlparse
+
 def scrape_sitemap(url):
+    # Check if the URL has a scheme (http or https)
+    if not urlparse(url).scheme:
+        url = 'https://' + url
+
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'xml')
     urls = [element.text for element in soup.find_all('loc')]
